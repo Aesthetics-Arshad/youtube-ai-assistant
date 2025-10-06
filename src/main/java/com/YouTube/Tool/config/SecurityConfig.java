@@ -36,7 +36,8 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/register",
-                                "/login" // Login page ko public karna zaroori hai
+                                "/login",
+                                "/actuator/health"// Login page ko public karna zaroori hai
                         ).permitAll()
                         // Baaki sabhi URLs ke liye login zaroori hai
                         .anyRequest().authenticated()
