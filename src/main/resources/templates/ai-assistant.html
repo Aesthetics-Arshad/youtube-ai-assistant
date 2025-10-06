@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AI YouTube Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center py-10">
+<div class="w-full max-w-2xl bg-gray-800 p-8 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold text-center text-white mb-6">Creative Copilot 🚀</h1>
+
+    <div th:if="${error}" class="bg-red-600 p-3 rounded mb-4" th:text="${error}"></div>
+
+    <form th:action="@{/ai-assistant/generate-all}" method="post" class="mb-8">
+        <label for="videoIdea" class="block text-lg font-medium text-gray-300 mb-2">Describe your video idea:</label>
+        <textarea id="videoIdea" name="videoIdea" rows="4"
+                  class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="e.g., Spring Boot microservices tutorial for beginners in Hindi" required th:text="${videoIdea}"></textarea>
+        <button type="submit" class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+            Generate All
+        </button>
+    </form>
+
+    <div th:if="${generatedTitles}" class="bg-gray-700 p-6 rounded-lg mb-6">
+        <h2 class="text-xl font-semibold text-white mb-4">✨ Suggested Titles:</h2>
+        <div class="whitespace-pre-wrap font-mono text-gray-200" th:text="${generatedTitles}"></div>
+    </div>
+
+    <div th:if="${generatedDescription}" class="bg-gray-700 p-6 rounded-lg mb-6">
+        <h2 class="text-xl font-semibold text-white mb-4">📝 Description Draft:</h2>
+        <div class="whitespace-pre-wrap font-sans text-gray-200" th:text="${generatedDescription}"></div>
+    </div>
+
+    <div th:if="${generatedTags}" class="bg-gray-700 p-6 rounded-lg">
+        <h2 class="text-xl font-semibold text-white mb-4">🏷️ Smart Tags:</h2>
+        <div class="whitespace-pre-wrap font-mono text-gray-200" th:text="${generatedTags}"></div>
+    </div>
+</div>
+</body>
+</html>
