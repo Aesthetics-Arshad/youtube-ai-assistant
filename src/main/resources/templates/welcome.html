@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGenius - AI-Powered YouTube Growth Platform | Intelligence Behind Every Video</title>
+
+    <!-- Meta Description -->
+    <meta name="description" content="VidGenius: Transform your YouTube channel with AI-powered tools. Generate optimized tags, create compelling thumbnails, and craft perfect video details. 100% free, unlimited usage.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2'%3E%3Cpath d='M9.5 2a2.5 2.5 0 0 1 5 0v.5a2.5 2.5 0 0 1 2.5 2.5v1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.5a2 2 0 0 1-2 2v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V15a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2V9a2.5 2.5 0 0 1 2.5-2.5V2.5z'/%3E%3Cpolygon points='10 8 16 12 10 16' fill='%234F46E5'/%3E%3C/svg%3E">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(ellipse at top, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .btn-shine {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+<!-- Navigation -->
+<div th:replace="~{fragments/navbar :: navbar}" th:with="activePage=''"></div>
+
+<!-- Hero Section -->
+<section class="hero-gradient pt-32 pb-20 px-4 min-h-screen flex items-center">
+    <div class="container mx-auto max-w-7xl">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+            <!-- Left Column: Content -->
+            <div class="space-y-8">
+                <!-- Badge -->
+                <div class="inline-flex items-center space-x-2 glass-card rounded-full px-5 py-2.5 animate-pulse">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                    <span class="text-sm font-medium">
+                        <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-bold">1M+</span>
+                        <span class="text-gray-300 ml-1">Tags Generated Monthly</span>
+                    </span>
+                </div>
+
+                <!-- Main Heading -->
+                <div>
+                    <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6">
+                        <span class="text-white">Unlock Your</span>
+                        <br>
+                        <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            YouTube Genius
+                        </span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-2xl">
+                        AI-powered tools that transform ordinary videos into viral sensations.
+                        <span class="text-blue-400 font-semibold">100% free</span>,
+                        <span class="text-purple-400 font-semibold">unlimited usage</span>,
+                        <span class="text-pink-400 font-semibold">instant results</span>.
+                    </p>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a th:href="@{/register}"
+                       class="group px-8 py-5 rounded-2xl btn-shine text-white font-bold text-lg shadow-2xl shadow-blue-500/50 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3">
+                        <span>Start Creating Now</span>
+                        <i class="bi bi-arrow-right-circle text-2xl group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#features"
+                       class="px-8 py-5 rounded-2xl glass-card hover:bg-white/10 text-white font-semibold text-lg transition-all duration-300 flex items-center justify-center space-x-3 group">
+                        <i class="bi bi-play-circle text-2xl"></i>
+                        <span>See How It Works</span>
+                    </a>
+                </div>
+
+                <!-- Social Proof -->
+                <div class="flex items-center space-x-8 pt-4">
+                    <div>
+                        <div class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">50K+</div>
+                        <div class="text-sm text-gray-400">Active Creators</div>
+                    </div>
+                    <div class="h-12 w-px bg-white/10"></div>
+                    <div>
+                        <div class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">4.9/5</div>
+                        <div class="text-sm text-gray-400">User Rating</div>
+                    </div>
+                    <div class="h-12 w-px bg-white/10"></div>
+                    <div>
+                        <div class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent">∞</div>
+                        <div class="text-sm text-gray-400">Usage Limits</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Visual -->
+            <div class="relative animate-float hidden lg:block">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-3xl"></div>
+                <div class="relative glass-card rounded-3xl p-8 space-y-6">
+                    <!-- Mock Tool Preview -->
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                                <i class="bi bi-tags-fill text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="h-4 bg-white/10 rounded-full w-3/4 mb-2"></div>
+                                <div class="h-3 bg-white/5 rounded-full w-1/2"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm">AI Generated</span>
+                            <span class="px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-sm">SEO Optimized</span>
+                            <span class="px-4 py-2 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-300 text-sm">Trending Tags</span>
+                        </div>
+
+                        <div class="h-px bg-white/10"></div>
+
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                                <i class="bi bi-stars text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="h-4 bg-white/10 rounded-full w-full mb-2"></div>
+                                <div class="h-3 bg-white/5 rounded-full w-2/3"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl p-4 text-sm text-gray-300">
+                            "Your AI-powered content suggestion will appear here..."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-24 px-4">
+    <div class="container mx-auto max-w-7xl">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center space-x-2 glass-card rounded-full px-5 py-2 mb-6">
+                <i class="bi bi-stars text-yellow-400"></i>
+                <span class="text-sm font-medium text-gray-300">Powerful Features</span>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-black mb-6">
+                Everything You Need to
+                <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"> Dominate YouTube</span>
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                Professional-grade tools powered by cutting-edge AI. Zero cost, unlimited potential.
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature 1: AI Assistant -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-stars text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">AI Content Generator</h3>
+                    <p class="text-gray-400 mb-4">Get intelligent title, description, and tag suggestions powered by advanced AI in seconds.</p>
+                    <div class="flex items-center text-blue-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Explore AI Tools</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Tag Generator -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-tags-fill text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Smart Tag Generator</h3>
+                    <p class="text-gray-400 mb-4">Generate SEO-optimized tags that boost your video's discoverability and reach instantly.</p>
+                    <div class="flex items-center text-purple-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Try Tag Generator</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3: Thumbnail Analyzer -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-image-fill text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Thumbnail Optimizer</h3>
+                    <p class="text-gray-400 mb-4">Analyze and optimize your thumbnails for maximum click-through rates with AI insights.</p>
+                    <div class="flex items-center text-pink-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Optimize Thumbnails</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4: Video Details -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-play-circle-fill text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Video Details Extractor</h3>
+                    <p class="text-gray-400 mb-4">Extract comprehensive video insights and optimize your content strategy with data.</p>
+                    <div class="flex items-center text-indigo-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Extract Details</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5: SEO Score -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-graph-up-arrow text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Real-time SEO Analysis</h3>
+                    <p class="text-gray-400 mb-4">Get instant SEO scores and actionable recommendations to improve video rankings.</p>
+                    <div class="flex items-center text-green-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Check SEO Score</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6: Unlimited -->
+            <div class="glass-card rounded-2xl p-8 hover:bg-white/5 transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/20 to-transparent rounded-bl-full"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-infinity text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Unlimited Everything</h3>
+                    <p class="text-gray-400 mb-4">No limits on usage, no hidden fees, no credit card required. Truly free forever.</p>
+                    <div class="flex items-center text-orange-400 font-medium group-hover:translate-x-2 transition-transform">
+                        <span>Start for Free</span>
+                        <i class="bi bi-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comparison Section -->
+<section class="py-24 px-4 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent">
+    <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-6xl font-black mb-6">
+                Why Pay When You Can Get It
+                <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"> Free?</span>
+            </h2>
+            <p class="text-xl text-gray-400">Compare VidGenius with premium platforms</p>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden">
+            <table class="w-full">
+                <thead>
+                <tr class="bg-white/5 border-b border-white/10">
+                    <th class="text-left px-8 py-6 text-gray-400 font-semibold">Feature</th>
+                    <th class="text-center px-8 py-6 text-gray-400 font-semibold">Other Platforms</th>
+                    <th class="text-center px-8 py-6 bg-gradient-to-r from-blue-600/20 to-purple-600/20">
+                        <div class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-bold">VidGenius</div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td class="px-8 py-6 text-white font-medium">AI Content Assistant</td>
+                    <td class="px-8 py-6 text-center text-gray-400">$39-99/month</td>
+                    <td class="px-8 py-6 text-center bg-blue-500/10">
+                            <span class="text-blue-400 font-bold flex items-center justify-center">
+                                <i class="bi bi-check-circle-fill mr-2"></i> FREE
+                            </span>
+                    </td>
+                </tr>
+                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td class="px-8 py-6 text-white font-medium">Tag Generation</td>
+                    <td class="px-8 py-6 text-center text-gray-400">$7-15/month</td>
+                    <td class="px-8 py-6 text-center bg-blue-500/10">
+                            <span class="text-blue-400 font-bold flex items-center justify-center">
+                                <i class="bi bi-check-circle-fill mr-2"></i> FREE
+                            </span>
+                    </td>
+                </tr>
+                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td class="px-8 py-6 text-white font-medium">Thumbnail Analysis</td>
+                    <td class="px-8 py-6 text-center text-gray-400">$16-29/month</td>
+                    <td class="px-8 py-6 text-center bg-blue-500/10">
+                            <span class="text-blue-400 font-bold flex items-center justify-center">
+                                <i class="bi bi-check-circle-fill mr-2"></i> FREE
+                            </span>
+                    </td>
+                </tr>
+                <tr class="hover:bg-white/3 transition-colors">
+                    <td class="px-8 py-6 text-white font-medium">Usage Limits</td>
+                    <td class="px-8 py-6 text-center text-gray-400">Limited</td>
+                    <td class="px-8 py-6 text-center bg-blue-500/10">
+                            <span class="text-purple-400 font-bold flex items-center justify-center">
+                                <i class="bi bi-infinity mr-2"></i> UNLIMITED
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-12">
+            <a th:href="@{/register}" class="inline-flex items-center space-x-3 px-10 py-6 rounded-2xl btn-shine text-white font-bold text-xl shadow-2xl shadow-blue-500/50 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
+                <span>Start Your Free Journey</span>
+                <i class="bi bi-rocket-takeoff text-2xl"></i>
+            </a>
+            <p class="text-gray-400 mt-6">No credit card • No hidden fees • No limits • Forever free</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24 px-4">
+    <div class="container mx-auto max-w-5xl">
+        <div class="glass-card rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10"></div>
+            <div class="relative">
+                <h2 class="text-4xl md:text-6xl font-black mb-6">
+                    Ready to Become a
+                    <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"> YouTube Genius?</span>
+                </h2>
+                <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Join thousands of creators who are growing their channels with AI-powered intelligence.
+                </p>
+                <a th:href="@{/register}" class="inline-flex items-center space-x-3 px-10 py-6 rounded-2xl btn-shine text-white font-bold text-xl shadow-2xl shadow-blue-500/50 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
+                    <span>Get Started Free</span>
+                    <i class="bi bi-arrow-right-circle text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-white/10 py-16 px-4">
+    <div class="container mx-auto max-w-7xl">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+            <!-- Brand Column -->
+            <div class="md:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl p-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9.5 2a2.5 2.5 0 0 1 5 0v.5a2.5 2.5 0 0 1 2.5 2.5v1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.5a2 2 0 0 1-2 2v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V15a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2V9a2.5 2.5 0 0 1 2.5-2.5V2.5z"/>
+                            <polygon points="10 8 16 12 10 16" fill="white"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">VidGenius</span>
+                </div>
+                <p class="text-gray-400 mb-6 max-w-md">
+                    Intelligence Behind Every Video. AI-powered YouTube growth platform for creators who want to dominate their niche.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+                        <i class="bi bi-twitter text-gray-400"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+                        <i class="bi bi-youtube text-gray-400"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+                        <i class="bi bi-github text-gray-400"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Product Column -->
+            <div>
+                <h4 class="text-white font-bold mb-4">Product</h4>
+                <ul class="space-y-3">
+                    <li><a th:href="@{/home}" class="text-gray-400 hover:text-white transition-colors">Tag Generator</a></li>
+                    <li><a th:href="@{/ai-assistant}" class="text-gray-400 hover:text-white transition-colors">AI Assistant</a></li>
+                    <li><a th:href="@{/thumbnails}" class="text-gray-400 hover:text-white transition-colors">Thumbnails</a></li>
+                    <li><a th:href="@{/video-details}" class="text-gray-400 hover:text-white transition-colors">Video Details</a></li>
+                </ul>
+            </div>
+
+            <!-- Company Column -->
+            <div>
+                <h4 class="text-white font-bold mb-4">Company</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-white/10 pt-8 text-center">
+            <p class="text-gray-400">© 2025 VidGenius. All rights reserved. Made with <i class="bi bi-heart-fill text-red-400"></i> for YouTube Creators</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script th:replace="~{fragments/navbar :: navbar-script}"></script>
+<script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

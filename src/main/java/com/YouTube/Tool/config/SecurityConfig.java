@@ -31,7 +31,7 @@ public class SecurityConfig {
                         // In URLs ko public rakho (koi bhi access kar sakta hai)
                         .requestMatchers(
                                 "/",
-                                "/home",
+                                "/welcome",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin
                         // Hum Spring ko bata rahe hain ki hamara custom login page is URL par hai
                         .loginPage("/login")
-                        .defaultSuccessUrl("/",true)
+                        .defaultSuccessUrl("/home",true)
                         .permitAll()
                 )
                 .logout(logout -> logout

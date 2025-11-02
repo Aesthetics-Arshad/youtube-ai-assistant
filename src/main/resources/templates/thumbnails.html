@@ -3,123 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Thumbnail Generator</title>
+    <title>Advanced Thumbnail Analyzer - VidGenius</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2'%3E%3Cpath d='M9.5 2a2.5 2.5 0 0 1 5 0v.5a2.5 2.5 0 0 1 2.5 2.5v1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.5a2 2 0 0 1-2 2v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V15a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2V9a2.5 2.5 0 0 1 2.5-2.5V2.5z'/%3E%3Cpolygon points='10 8 16 12 10 16' fill='%234F46E5'/%3E%3C/svg%3E">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- ✅ Keep Tailwind Custom Config -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            500: '#2563eb',
-                            600: '#1d4ed8',
-                            700: '#1d4ed8'
-                        },
-                        accent: '#22c55e'
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        .main-title {
-            background: linear-gradient(90deg, #2563eb, #22c55e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .thumbnail-preview, .yt-thumb {
+            aspect-ratio: 16/9;
+            object-fit: cover; /* This prevents image stretching */
         }
-        .gradient-header {
-            background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(34,197,94,.08));
-            border: 1px dashed #e2e8f0;
-        }
-        .thumb-box {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: border-color 0.3s ease;
-        }
-        .error {
-            background: rgba(239, 68, 68, 0.12);
-            color: #ef4444;
-            border-left: 4px solid #ef4444;
-        }
-        .dark .gradient-header {
-            border-color: #334155;
-        }
-        .dark .thumb-box {
-            border-color: #334155;
-        }
+        .yt-placeholder-bg { background-color: rgba(255, 255, 255, 0.05); }
+        .yt-placeholder-text { background-color: rgba(255, 255, 255, 0.1); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100">
+<body class="text-white">
 
 <div th:replace="~{fragments/navbar :: navbar}" th:with="activePage='thumbnails'"></div>
 
-<div class="container mx-auto px-4 max-w-2xl mt-12 pb-12">
-    <!-- ✅ Title & Header -->
-    <div class="text-center mb-8">
-        <h1 class="main-title text-4xl md:text-5xl font-extrabold mb-4">YouTube Thumbnail Generator</h1>
-        <div class="gradient-header rounded-xl p-4 mt-6">
-            <p class="text-slate-600 dark:text-slate-400 text-lg mb-0">
-                Enter a YouTube video URL or ID to get high resolution thumbnail (1280x720).
-            </p>
+<div class="container mx-auto px-4 py-8 max-w-7xl mt-20">
+    <div class="grid lg:grid-cols-5 gap-8">
+        <div class="lg:col-span-2 space-y-6">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-lg shadow-pink-500/50">
+                    <i class="bi bi-card-image text-white text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-black">Thumbnail Analyzer</h1>
+                    <p class="text-gray-400">Analyze, preview, and download thumbnails.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex p-1 bg-white/5 rounded-xl mb-6">
+                    <button id="tab-youtube" onclick="switchTab('youtube')" class="flex-1 p-3 rounded-lg font-semibold flex items-center justify-center gap-2"><i class="bi bi-youtube"></i> YouTube URL</button>
+                    <button id="tab-custom" onclick="switchTab('custom')" class="flex-1 p-3 rounded-lg font-semibold flex items-center justify-center gap-2"><i class="bi bi-upload"></i> Upload</button>
+                </div>
+                <div id="form-youtube"><form th:action="@{/get-thumbnail-from-url}" method="post" class="space-y-4"><input type="url" name="thumbnailUrl" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl placeholder-gray-500" placeholder="https://www.youtube.com/watch?v=..." required><button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i class="bi bi-search"></i><span>Analyze from URL</span></button></form></div>
+                <div id="form-custom" class="hidden"><form th:action="@{/get-thumbnail-from-upload}" method="post" enctype="multipart/form-data" class="space-y-4"><input type="file" name="customThumbnail" class="w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-pink-500/10 file:text-pink-300 hover:file:bg-pink-500/20" accept="image/png, image/jpeg" required><button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i class="bi bi-cloud-arrow-up-fill"></i><span>Upload & Analyze</span></button></form></div>
+            </div>
         </div>
-    </div>
 
-    <!-- ✅ Form -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 mb-8">
-        <form th:action="@{/get-thumbnail}" method="post">
-            <label for="videoUrlOrId" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                YouTube Video URL or ID
-            </label>
-            <input type="text" id="videoUrlOrId" name="videoUrlOrId"
-                   class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-colors duration-200 mb-4"
-                   required>
-            <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-colors duration-200">
-                Get Thumbnail
-            </button>
-        </form>
+        <div class="lg:col-span-3 space-y-6">
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-3"><i class="bi bi-clipboard-data-fill text-pink-400"></i>Analysis Report</h2>
+                <div th:if="${thumbnailData == null}" class="text-center py-12"><i class="bi bi-image text-gray-600 text-6xl"></i><h3 class="text-xl font-bold text-white mt-4">Ready for Analysis</h3><p class="text-gray-400">Your results will appear here.</p></div>
+                <div th:if="${thumbnailData != null}" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="relative group"><img id="main-thumbnail-img" th:src="${thumbnailData.url}" class="w-full thumbnail-preview object-cover rounded-xl border border-white/10"><div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"><button id="download-btn" th:data-url="${thumbnailData.url}" class="px-5 py-3 rounded-lg bg-black/60 backdrop-blur-sm text-white font-semibold hover:bg-black/80"><i class="bi bi-download"></i> Download</button></div></div>
+                        <div class="space-y-4"><div class="glass-card rounded-xl p-4 border border-pink-500/30"><div class="flex items-center justify-between"><h3 class="font-bold text-white">Overall Score</h3><div class="text-3xl font-black" th:classappend="${thumbnailData.score >= 80} ? 'text-green-400' : (${thumbnailData.score >= 60} ? 'text-yellow-400' : 'text-red-400')"><span th:text="${thumbnailData.score}"></span><span class="text-lg">/100</span></div></div><div class="h-2 bg-white/10 rounded-full mt-2"><div class="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full" th:style="'width: ' + ${thumbnailData.score} + '%'"></div></div></div><div class="grid grid-cols-3 gap-3"><div class="glass-card rounded-lg p-3 text-center"><i class="bi text-xl mb-1" th:classappend="${thumbnailData.hasText} ? 'bi-check-circle-fill text-green-400' : 'bi-x-circle-fill text-gray-400'"></i><div class="text-xs font-semibold" th:text="${thumbnailData.hasText} ? 'Clear Text' : 'No Text'"></div></div><div class="glass-card rounded-lg p-3 text-center"><i class="bi text-xl mb-1" th:classappend="${thumbnailData.hasFace} ? 'bi-check-circle-fill text-green-400' : 'bi-x-circle-fill text-gray-400'"></i><div class="text-xs font-semibold" th:text="${thumbnailData.hasFace} ? 'Face Detected' : 'No Face'"></div></div><div class="glass-card rounded-lg p-3 text-center"><i class="bi text-xl mb-1" th:classappend="${thumbnailData.highContrast} ? 'bi-check-circle-fill text-green-400' : 'bi-x-circle-fill text-gray-400'"></i><div class="text-xs font-semibold" th:text="${thumbnailData.highContrast} ? 'Good Contrast' : 'Low Contrast'"></div></div></div></div>
+                    </div>
+                    <div class="glass-card rounded-xl p-5 border border-yellow-500/20"><h3 class="font-bold text-white mb-3 flex items-center gap-2"><i class="bi bi-lightbulb-fill text-yellow-400"></i>Recommendations</h3><ul class="space-y-2 text-sm text-gray-300"><li th:each="rec : ${thumbnailData.recommendations}" class="flex items-start gap-2"><i class="bi bi-arrow-right-circle text-yellow-400 mt-0.5"></i><span th:text="${rec}"></span></li></ul></div>
+                </div>
+            </div>
 
-        <!-- ✅ Error Message -->
-        <div th:if="${error}" class="error rounded-lg p-4 mt-4" th:text="${error}"></div>
-    </div>
-
-    <!-- ✅ Thumbnail Result -->
-    <div th:if="${thumbnailUrl}" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">High Quality Thumbnail (1280x720)</h2>
-        <div class="flex justify-end mb-4">
-            <button type="button"
-                    onclick="downloadImage('[[${thumbnailUrl}]]', 'youtube-thumbnail-[[${videoId}]]-hq.jpg')"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-                Download Thumbnail
-            </button>
-        </div>
-        <div class="thumb-box p-4">
-            <img th:src="${thumbnailUrl}" alt="YouTube thumbnail high quality" class="w-full h-auto"
-                 onerror="this.onerror=null;this.src='https://via.placeholder.com/1280x720?text=High+Quality+Thumbnail+Not+Available';">
+            <div th:if="${thumbnailData != null}" class="glass-card rounded-2xl p-6 mt-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-3"><i class="bi bi-display-fill text-blue-400"></i>YouTube Preview</h2>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Homepage & Mobile Feed</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="flex flex-col gap-2"><div class="w-full yt-thumb rounded-lg yt-placeholder-bg"></div><div class="flex gap-3 items-center"><div class="w-9 h-9 rounded-full yt-placeholder-bg flex-shrink-0"></div><div class="flex-1 space-y-2"><div class="w-full h-3 rounded yt-placeholder-text"></div><div class="w-2/3 h-3 rounded yt-placeholder-text"></div></div></div></div>
+                        <div class="flex flex-col gap-2">
+                            <img id="preview-home-img" th:src="${thumbnailData.url}" class="w-full yt-thumb object-cover rounded-lg ring-2 ring-pink-500">
+                            <div class="flex gap-3 items-center">
+                                <div class="w-9 h-9 rounded-full bg-pink-500/50 flex-shrink-0 flex items-center justify-center"><i class="bi bi-person-fill text-white"></i></div>
+                                <div class="flex-1 space-y-2">
+                                    <div class="w-full h-3 rounded font-bold text-white/80 text-sm">Your Video Title Here</div>
+                                    <div class="w-2/3 h-3 rounded text-xs text-gray-400">Your Channel</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden sm:flex flex-col gap-2"><div class="w-full yt-thumb rounded-lg yt-placeholder-bg"></div><div class="flex gap-3 items-center"><div class="w-9 h-9 rounded-full yt-placeholder-bg flex-shrink-0"></div><div class="flex-1 space-y-2"><div class="w-full h-3 rounded yt-placeholder-text"></div><div class="w-2/3 h-3 rounded yt-placeholder-text"></div></div></div></div>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <h3 class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Up Next & Sidebar</h3>
+                    <div class="space-y-3">
+                        <div class="flex gap-3 p-2 rounded-lg bg-white/5">
+                            <img id="preview-sidebar-img" th:src="${thumbnailData.url}" class="w-32 yt-thumb object-cover rounded ring-2 ring-pink-500">
+                            <div class="flex-1 space-y-1 pt-1">
+                                <div class="w-full h-3 rounded font-bold text-white/80 text-sm">Your Video Title Here</div>
+                                <div class="w-2/3 h-3 rounded text-xs text-gray-400">Your Channel</div>
+                                <div class="w-1/2 h-3 rounded text-xs text-gray-500">1.2M views</div>
+                            </div>
+                        </div>
+                        <div th:each="i : ${#numbers.sequence(1, 2)}" class="flex gap-3 p-2">
+                            <div class="w-32 yt-thumb rounded flex-shrink-0 yt-placeholder-bg"></div>
+                            <div class="flex-1 space-y-1 pt-1">
+                                <div class="w-full h-3 rounded yt-placeholder-text"></div>
+                                <div class="w-2/3 h-3 rounded yt-placeholder-text"></div>
+                                <div class="w-1/2 h-3 rounded yt-placeholder-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script th:replace="~{fragments/navbar :: navbar-script}"></script>
 <script>
-    function downloadImage(url, filename) {
-        fetch(url, { mode: 'cors' })
+    function switchTab(activeTab) {
+        document.getElementById('tab-youtube').classList.toggle('bg-pink-500/20', activeTab === 'youtube');
+        document.getElementById('tab-custom').classList.toggle('bg-pink-500/20', activeTab === 'custom');
+        document.getElementById('form-youtube').classList.toggle('hidden', activeTab !== 'youtube');
+        document.getElementById('form-custom').classList.toggle('hidden', activeTab !== 'custom');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const activeTab = /*[[${activeTab}]]*/ 'youtube';
+        switchTab(activeTab || 'youtube');
+
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => {
+                const imageUrl = downloadBtn.getAttribute('data-url');
+                forceDownload(imageUrl, 'thumbnail.jpg');
+            });
+        }
+    });
+
+    function forceDownload(imageUrl, fileName) {
+        fetch(imageUrl, { headers: new Headers({ 'Origin': location.origin }), mode: 'cors' })
             .then(response => response.blob())
             .then(blob => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(blobUrl);
             })
-            .catch(() => alert('Failed to download thumbnail.'));
+            .catch(e => console.error("Download failed:", e));
     }
 </script>
 

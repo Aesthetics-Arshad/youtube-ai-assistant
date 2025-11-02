@@ -1,185 +1,272 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org ">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube SEO Tag Generator</title>
+    <title>Smart Tag Generator - VidGenius | AI-Powered YouTube Tags</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2'%3E%3Cpath d='M9.5 2a2.5 2.5 0 0 1 5 0v.5a2.5 2.5 0 0 1 2.5 2.5v1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.5a2 2 0 0 1-2 2v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V15a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2V9a2.5 2.5 0 0 1 2.5-2.5V2.5z'/%3E%3Cpolygon points='10 8 16 12 10 16' fill='%234F46E5'/%3E%3C/svg%3E">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { 50: '#eff6ff', 500: '#2563eb', 600: '#1d4ed8', 700: '#1d4ed8' },
-                        accent: '#22c55e'
-                    }
-                }
-            }
-        }
-    </script>
+
     <style>
-        .main-title {
-            background: linear-gradient(90deg, #2563eb, #22c55e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
         }
-        .gradient-header {
-            background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(34,197,94,.08));
-            border: 1px dashed #e2e8f0;
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .tag {
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid #e2e8f0;
-            transition: transform .1s ease, background .2s ease;
-        }
-        .tag:hover {
-            transform: translateY(-1px);
-            background: rgba(34, 197, 94, 0.22);
-        }
-        .error {
-            background: rgba(239, 68, 68, 0.12);
-            color: #ef4444;
-            border-left: 4px solid #ef4444;
-        }
-        .success {
-            background: rgba(16, 185, 129, 0.12);
-            color: #10b981;
-            border-left: 4px solid #10b981;
-        }
-        .dark .gradient-header {
-            border-color: #334155;
-        }
-        .dark .tag {
-            border-color: #334155;
+
+        .tag-pill.selected {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #60a5fa;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100">
-<div th:replace="~{fragments/navbar :: navbar}" th:with="activePage='seo'"></div>
+<body class="text-white">
 
-<div class="container mx-auto px-4 max-w-2xl mt-12 pb-12">
-    <div class="text-center mb-8">
-        <h1 class="main-title text-4xl md:text-5xl font-extrabold mb-4">YouTube SEO Tag Generator</h1>
-        <div class="gradient-header rounded-xl p-4 mt-6">
-            <p class="text-slate-600 dark:text-slate-400 text-lg mb-0">
-                Enter a YouTube video title to find and extract SEO tags from similar videos to optimize your content.
-            </p>
+<div th:replace="~{fragments/navbar :: navbar}" th:with="activePage='tags'"></div>
+
+<div class="container mx-auto px-4 py-8 max-w-4xl mt-20">
+
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 mb-5 shadow-2xl shadow-blue-500/50">
+            <i class="bi bi-tags-fill text-white text-3xl"></i>
         </div>
+        <h1 class="text-4xl md:text-5xl font-black mb-3">Smart Tag Generator</h1>
+        <p class="text-md text-gray-400 max-w-2xl mx-auto">Generate SEO-optimized tags from high-ranking videos.</p>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 mb-8">
-        <form action="/youtube/search" method="post">
-            <div class="mb-6 text-start">
-                <label for="videoTitle" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    YouTube Video Title
-                </label>
-                <input type="text" id="videoTitle" name="videoTitle"
-                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-colors duration-200"
-                       placeholder="Enter the title of your YouTube video" required>
-            </div>
-            <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center justify-center gap-2">
-                <span class="text-xl">&#43;</span> Generate SEO Tags
+    <div class="glass-card rounded-2xl p-8 mb-12 border border-blue-500/20 shadow-xl max-w-3xl mx-auto">
+        <form th:action="@{/youtube/search}" method="post" data-testid="tag-generator-form">
+            <label for="videoTitle" class="block text-md font-bold text-white mb-3 text-center">
+                <i class="bi bi-keyboard"></i>
+                Enter Your Video Topic
+            </label>
+            <textarea
+                    id="videoTitle"
+                    name="videoTitle"
+                    rows="3"
+                    required
+                    class="w-full text-center text-md p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                    placeholder="e.g., Spring Boot REST API tutorial"></textarea>
+            <button
+                    type="submit"
+                    data-testid="generate-tags-button"
+                    class="w-full mt-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.03] shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2 text-md">
+                <i class="bi bi-magic text-xl"></i>
+                <span>Generate Tags</span>
             </button>
         </form>
     </div>
 
-    <!-- Show error if any -->
-    <div th:if="${error}" class="error rounded-lg p-4 mb-4" th:text="${error}"></div>
-
-    <!-- Show results -->
-    <div th:if="${primaryVideo != null}">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
-                    <i class="bi bi-star-fill text-blue-500"></i>
-                    <span>Primary Video Tags</span>
-                </div>
-                <button type="button"
-                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                        th:data-tags="${primaryVideo.tagsAsString}"
-                        onclick="copyTags(this)">
-                    <i class="bi bi-clipboard2-check"></i> Copy Tags
-                </button>
-            </div>
-            <div class="text-slate-600 dark:text-slate-400 mb-4" th:text="${primaryVideo.title}"></div>
-            <div class="text-slate-600 dark:text-slate-400 mb-4" th:text="${primaryVideo.channelTitle}"></div>
-            <div>
-                <span th:if="${#lists.isEmpty(primaryVideo.tags)}" class="text-slate-500 dark:text-slate-400 italic">No tags found for this video.</span>
-                <span th:each="tag : ${primaryVideo.tags}"
-                      class="tag inline-flex items-center gap-2 rounded-full px-3 py-2 mr-2 mb-2 text-sm">
-        <i class="bi bi-hash"></i><span th:text="${tag}"></span>
-    </span>
-            </div>
-        </div>
-    </div>
-
-    <div th:if="${relatedVideos != null}">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-6 mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
-                    <i class="bi bi-collection text-blue-500"></i>
-                    <span>Related Videos Tags</span>
-                </div>
-                <button type="button"
-                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                        th:data-tags="${allTagsAsString}"
-                        onclick="copyTags(this)">
-                    <i class="bi bi-clipboard2"></i> Copy All
-                </button>
-            </div>
-            <div class="mt-4">
-                <div th:each="video : ${relatedVideos}" class="mb-6">
-                    <div class="font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                        <i class="bi bi-play-btn mr-2 text-blue-500"></i>
-                        <span th:text="${video.title}"></span>
+    <div th:if="${tags != null}">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+                <div th:if="${primaryVideo != null and primaryVideo.tags != null and !primaryVideo.tags.isEmpty()}" class="glass-card rounded-2xl p-6">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-white/10 pb-3 mb-4">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-400 flex items-center gap-2 uppercase tracking-wider">
+                                <i class="bi bi-star-fill text-yellow-400"></i>
+                                Primary Source
+                            </h3>
+                            <p class="font-bold text-white text-lg mt-1" th:text="${primaryVideo.title}">Primary Video Title</p>
+                        </div>
+                        <button th:data-tags="${#strings.listJoin(primaryVideo.tags, ', ')}"
+                                onclick="copySectionTags(this, 'primary-copy-btn-text')"
+                                class="copy-btn mt-3 sm:mt-0 px-4 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 font-medium transition-colors flex items-center space-x-2 text-sm self-start sm:self-center">
+                            <i class="bi bi-clipboard"></i>
+                            <span th:id="primary-copy-btn-text">Copy</span>
+                        </button>
                     </div>
-                    <div class="text-slate-600 dark:text-slate-400 mb-2">
-                        <i class="bi bi-person-video"></i> <span th:text="${video.channelTitle}"></span>
-                    </div>
-                    <div>
-                        <span th:if="${#lists.isEmpty(video.tags)}" class="text-slate-500 dark:text-slate-400 italic">No tags found</span>
-                        <span th:each="tag : ${video.tags}"
-                              class="tag inline-flex items-center gap-2 rounded-full px-3 py-2 mr-2 mb-2 text-sm">
-                            <i class="bi bi-tag"></i><span th:text="${tag}"></span>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="tag : ${primaryVideo.tags}" th:text="${tag}"
+                              class="tag-pill inline-flex items-center px-3 py-1.5 bg-blue-500/10 border border-transparent hover:border-blue-500/50 rounded-lg text-xs font-medium text-blue-300 transition-all cursor-pointer">
                         </span>
                     </div>
                 </div>
+
+                <div th:if="${relatedVideos != null and !relatedVideos.isEmpty()}">
+                    <h3 class="text-md font-bold text-gray-300 mb-4 flex items-center gap-3 uppercase tracking-wider">
+                        <i class="bi bi-diagram-3-fill text-purple-400"></i>
+                        Related Sources
+                    </h3>
+                    <div class="space-y-4">
+                        <div th:each="video, iter : ${relatedVideos}" th:if="${video.tags != null and !video.tags.isEmpty()}" class="glass-card rounded-xl p-4 transition-all hover:bg-white/5">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-start">
+                                <div class="mb-3 sm:mb-0">
+                                    <p class="font-semibold text-white" th:text="${video.title}">Related Video Title</p>
+                                    <p class="text-xs text-gray-400" th:text="${'by ' + video.channelTitle}">by Channel Name</p>
+                                </div>
+                                <button th:data-tags="${#strings.listJoin(video.tags, ', ')}"
+                                        th:onclick="'copySectionTags(this, \'related-copy-btn-text-' + ${iter.index} + '\')'"
+                                        class="copy-btn px-4 py-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 font-medium transition-colors flex items-center space-x-2 text-sm self-start">
+                                    <i class="bi bi-clipboard"></i>
+                                    <span th:id="'related-copy-btn-text-' + ${iter.index}">Copy</span>
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-3 border-t border-white/5 pt-3">
+                                 <span th:each="tag : ${video.tags}" th:text="${tag}"
+                                       class="tag-pill inline-flex items-center px-3 py-1.5 bg-purple-500/10 border border-transparent hover:border-purple-500/50 rounded-lg text-xs font-medium text-purple-300 transition-all cursor-pointer">
+                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="glass-card rounded-2xl p-6 border border-green-500/30 sticky top-24">
+                    <h3 class="font-bold text-white text-lg mb-2 flex items-center gap-2">
+                        <i class="bi bi-clipboard-check"></i>
+                        Finalize & Copy
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4">Click tags to build your list, then copy your selection.</p>
+                    <div class="space-y-3">
+                        <button id="copy-selected-btn"
+                                class="w-full px-5 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-green-500/20">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Copy Selected (<span id="selected-count">0</span>)</span>
+                        </button>
+                        <button id="copy-all-btn"
+                                th:data-tags="${#strings.listJoin(tags, ', ')}"
+                                class="w-full px-5 py-3 rounded-xl border-2 border-blue-500/50 hover:bg-blue-500/20 text-white font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="bi bi-collection"></i>
+                            <span>Copy All Tags</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-white text-lg mb-3 flex items-center gap-2">
+                        <i class="bi bi-lightbulb text-yellow-400"></i>
+                        Pro Tips
+                    </h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="bi bi-1-circle-fill text-green-400 mt-1"></i>
+                            <span>Mix **broad** (e.g., "Java") and **specific** (e.g., "Spring Boot JWT") tags for wider reach.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="bi bi-2-circle-fill text-green-400 mt-1"></i>
+                            <span>Place your most important keywords in the first 3-5 tags to give YouTube context.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="bi bi-3-circle-fill text-green-400 mt-1"></i>
+                            <span>Use the "Click-to-Select" feature to build the perfect tag list from all sources.</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-
-    <div id="copySuccess" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hidden">
-        Tags copied!
-    </div>
 </div>
 
+<script th:replace="~{fragments/navbar :: navbar-script}"></script>
 <script>
-    function copyTags(buttonElement) {
-        // Button ke 'data-tags' attribute se tags ki string nikalo
+    function copySectionTags(buttonElement, textSpanId) {
         const tagsToCopy = buttonElement.getAttribute('data-tags');
+        if (!tagsToCopy) return;
 
-        // Check karo ki tags empty to nahi hain
-        if (tagsToCopy && tagsToCopy.trim() !== '') {
-            navigator.clipboard.writeText(tagsToCopy)
-                .then(() => {
-                    // Success message dikhao
-                    const success = document.getElementById('copySuccess');
-                    if (success) {
-                        success.classList.remove('hidden');
-                        setTimeout(() => success.classList.add('hidden'), 2000);
+        navigator.clipboard.writeText(tagsToCopy).then(() => {
+            const textSpan = document.getElementById(textSpanId);
+            const originalText = textSpan.innerText;
+            const icon = buttonElement.querySelector('i');
+
+            textSpan.innerText = 'Copied!';
+            icon.className = 'bi bi-check-circle-fill text-green-400';
+
+            setTimeout(() => {
+                textSpan.innerText = originalText;
+                icon.className = 'bi bi-clipboard';
+            }, 2000);
+        });
+    }
+
+    const selectedTags = new Set();
+    const selectedCountSpan = document.getElementById('selected-count');
+    const copySelectedBtn = document.getElementById('copy-selected-btn');
+
+    document.querySelectorAll('.tag-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            pill.classList.toggle('selected');
+            const tagText = pill.innerText;
+
+            if (selectedTags.has(tagText)) {
+                selectedTags.delete(tagText);
+            } else {
+                selectedTags.add(tagText);
+            }
+
+            if (selectedCountSpan) {
+                selectedCountSpan.innerText = selectedTags.size;
+            }
+        });
+    });
+
+    if (copySelectedBtn) {
+        copySelectedBtn.addEventListener('click', () => {
+            if (selectedTags.size === 0) {
+                const btnSpan = copySelectedBtn.querySelector('span');
+                const originalHTML = btnSpan.innerHTML;
+                btnSpan.innerText = 'Select Tags First!';
+                setTimeout(() => {
+                    btnSpan.innerHTML = originalHTML;
+                    if (document.getElementById('selected-count')) {
+                       document.getElementById('selected-count').innerText = selectedTags.size;
                     }
-                })
-                .catch(() => {
-                    // Agar copy fail ho to alert dikhao
-                    alert('Could not copy tags.');
-                });
-        }
+                }, 2000);
+                return;
+            }
+
+            const tagsToCopy = Array.from(selectedTags).join(', ');
+            navigator.clipboard.writeText(tagsToCopy).then(() => {
+                const buttonText = copySelectedBtn.querySelector('span');
+                const originalHTML = buttonText.innerHTML;
+
+                buttonText.innerText = `Copied ${selectedTags.size} Tags!`;
+
+                setTimeout(() => {
+                    buttonText.innerHTML = originalHTML;
+                    if (document.getElementById('selected-count')) {
+                       document.getElementById('selected-count').innerText = selectedTags.size;
+                    }
+                }, 2000);
+            });
+        });
+    }
+
+    const copyAllBtn = document.getElementById('copy-all-btn');
+    if (copyAllBtn) {
+        copyAllBtn.addEventListener('click', (event) => {
+            const tagsToCopy = event.currentTarget.getAttribute('data-tags');
+            if (!tagsToCopy) return;
+
+            navigator.clipboard.writeText(tagsToCopy).then(() => {
+                const buttonText = copyAllBtn.querySelector('span');
+                const originalText = buttonText.innerText;
+                const icon = copyAllBtn.querySelector('i');
+                const originalIconClass = icon.className;
+
+                buttonText.innerText = 'All Tags Copied!';
+                icon.className = 'bi bi-check-all text-green-400';
+
+                setTimeout(() => {
+                    buttonText.innerText = originalText;
+                    icon.className = originalIconClass;
+                }, 2000);
+            });
+        });
     }
 </script>
+
 </body>
 </html>

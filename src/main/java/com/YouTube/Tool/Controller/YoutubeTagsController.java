@@ -1,11 +1,16 @@
 package com.YouTube.Tool.Controller;
 
-
+import com.YouTube.Tool.Entity.User;
+import com.YouTube.Tool.Model.ActivityType;
 import com.YouTube.Tool.Model.SearchVideo;
 import com.YouTube.Tool.Model.Video;
+import com.YouTube.Tool.Repository.UserRepository;
+import com.YouTube.Tool.Service.ActivityService;
 import com.YouTube.Tool.Service.YoutubeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,75 +19,80 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/youtube")
+@RequiredArgsConstructor // Use this for cleaner constructor injection
 public class YoutubeTagsController {
 
-    @Autowired
-    private YoutubeService youtubeService;
-
+    // Injected services
+    private final YoutubeService youtubeService;
+    private final ActivityService activityService;
+    private final UserRepository userRepository;
 
     @Value("${youtube.api.key}")
     public String apikey;
 
-
-    private boolean isConfigured(){
-        return apikey!=null && !apikey.isEmpty();
-
+    private boolean isConfigured() {
+        return apikey != null && !apikey.isEmpty();
     }
 
-
-    // YoutubeTagsController.java
-
     @PostMapping("/search")
-    public String videoTags(@RequestParam("videoTitle") String videoTitle, Model model) {
+    public String videoTags(@RequestParam("videoTitle") String videoTitle, @AuthenticationPrincipal UserDetails userDetails, Model model) {
 
         if (!isConfigured()) {
-            model.addAttribute("error", "Api key is not configured");
+            model.addAttribute("error", "API key is not configured");
             return "home";
         }
-        if (videoTitle == null || videoTitle.isEmpty()) {
+        if (videoTitle == null || videoTitle.trim().isEmpty()) {
             model.addAttribute("error", "Video Title is Required");
             return "home";
         }
+
         try {
-            // 1. Service se search result fetch kiya
+            // 1. Fetch search results from service
             SearchVideo result = youtubeService.searchVideos(videoTitle);
+
+            // Filter out related videos that have no tags
+            List<Video> relatedVideosWithTags = new ArrayList<>();
+            if (result.getRelatedVideos() != null) {
+                relatedVideosWithTags = result.getRelatedVideos().stream()
+                        .filter(video -> video.getTags() != null && !video.getTags().isEmpty())
+                        .collect(Collectors.toList());
+            }
+
             model.addAttribute("primaryVideo", result.getPrimaryVideo());
-            model.addAttribute("relatedVideos", result.getRelatedVideos());
+            model.addAttribute("relatedVideos", relatedVideosWithTags);
 
-            // --- YEH NEW LOGIC HAI JO MISSING THA ---
-            // 2. Ek khali list banayi saare tags ko collect karne ke liye
+            // 2. Collect all tags into a single list
             List<String> allCollectedTags = new ArrayList<>();
-
-            // 3. Primary video ke tags add kiye (null check ke saath)
             if (result.getPrimaryVideo() != null && result.getPrimaryVideo().getTags() != null) {
                 allCollectedTags.addAll(result.getPrimaryVideo().getTags());
             }
-
-            // 4. Related videos ke tags add kiye (null check ke saath)
-            if (result.getRelatedVideos() != null) {
-                for (Video video : result.getRelatedVideos()) {
-                    if (video.getTags() != null) {
-                        allCollectedTags.addAll(video.getTags());
-                    }
-                }
+            for (Video video : relatedVideosWithTags) {
+                allCollectedTags.addAll(video.getTags());
             }
 
-            // 5. Saare collected tags se ek single, comma-separated string banayi
-            String allTagsString = String.join(", ", allCollectedTags);
+            // 3. Add all necessary data to the model for the frontend
+            model.addAttribute("tags", allCollectedTags);
+            model.addAttribute("tagsCount", allCollectedTags.size());
 
-            // 6. Us string ko 'allTagsAsString' naam se model mein add kiya
-            model.addAttribute("allTagsAsString", allTagsString);
-            // --- END OF NEW LOGIC ---
+            // --- DASHBOARD LOGIC ---
+            // 4. If a user is logged in, log this activity
+            if (userDetails != null) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                        .orElseThrow(() -> new IllegalStateException("Cannot find logged in user"));
+                activityService.logActivity(user, ActivityType.TAG_GENERATION, videoTitle);
+            }
+            // --- END DASHBOARD LOGIC ---
 
             return "home";
 
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "An error occurred while fetching tags: " + e.getMessage());
+            e.printStackTrace(); // Good for debugging
             return "home";
         }
     }
-
 }

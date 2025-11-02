@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VidGenius | Your YouTube Growth Hub</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2'%3E%3Cpath d='M9.5 2a2.5 2.5 0 0 1 5 0v.5a2.5 2.5 0 0 1 2.5 2.5v1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.5a2 2 0 0 1-2 2v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V15a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2V9a2.5 2.5 0 0 1 2.5-2.5V2.5z'/%3E%3Cpolygon points='10 8 16 12 10 16' fill='%234F46E5'/%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="text-white">
+
+<div th:replace="~{fragments/navbar :: navbar}" th:with="activePage='dashboard'"></div>
+
+<div class="container mx-auto px-4 py-8 max-w-7xl mt-20">
+    <div class="mb-8 animate-slide-up">
+        <h1 class="text-4xl md:text-5xl font-black mb-3">Welcome back, <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent" sec:authentication="name">Creator</span>! 🚀</h1>
+        <p class="text-gray-400 text-lg">Here's your YouTube growth overview</p>
+    </div>
+
+    <div th:if="${stats != null}">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="glass-card rounded-2xl p-6 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 border border-blue-500/20">
+                <div class="flex items-center justify-between mb-4"><div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center"><i class="bi bi-tags-fill text-white text-xl"></i></div></div>
+                <div class="text-3xl font-black text-white mb-1" th:text="${stats.totalTags}">0</div>
+                <div class="text-sm text-gray-400">Tags Generated</div>
+            </div>
+            <div class="glass-card rounded-2xl p-6 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 border border-purple-500/20">
+                <div class="flex items-center justify-between mb-4"><div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center"><i class="bi bi-stars text-white text-xl"></i></div></div>
+                <div class="text-3xl font-black text-white mb-1" th:text="${stats.aiRequests}">0</div>
+                <div class="text-sm text-gray-400">AI Generations</div>
+            </div>
+            <div class="glass-card rounded-2xl p-6 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 border border-pink-500/20">
+                <div class="flex items-center justify-between mb-4"><div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center"><i class="bi bi-image-fill text-white text-xl"></i></div></div>
+                <div class="text-3xl font-black text-white mb-1" th:text="${stats.thumbnailsAnalyzed}">0</div>
+                <div class="text-sm text-gray-400">Thumbnails Analyzed</div>
+            </div>
+            <div class="glass-card rounded-2xl p-6 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 border border-indigo-500/20">
+                <div class="flex items-center justify-between mb-4"><div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center"><i class="bi bi-play-circle-fill text-white text-xl"></i></div></div>
+                <div class="text-3xl font-black text-white mb-1" th:text="${stats.videosAnalyzed}">0</div>
+                <div class="text-sm text-gray-400">Videos Analyzed</div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <div class="glass-card rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="flex items-center justify-between mb-6"><h2 class="text-2xl font-bold flex items-center"><i class="bi bi-clock-history text-blue-400 mr-3"></i>Recent Activity</h2></div>
+                    <div th:if="${stats.recentActivities.isEmpty()}" class="text-center py-12"><p class="text-gray-500">You have no recent activity. Use a tool to get started!</p></div>
+                    <div th:unless="${stats.recentActivities.isEmpty()}" class="space-y-4">
+                        <div th:each="activity : ${stats.recentActivities}" class="glass-card rounded-xl p-4 hover:bg-white/5 transition-colors border-white/10">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" th:switch="${activity.activityType.name()}">
+                                    <i th:case="'TAG_GENERATION'" class="bi bi-tags-fill text-blue-400 text-xl"></i>
+                                    <i th:case="'AI_ASSISTANT_USE'" class="bi bi-stars text-purple-400 text-xl"></i>
+                                    <i th:case="'THUMBNAIL_ANALYSIS'" class="bi bi-image-fill text-pink-400 text-xl"></i>
+                                    <i th:case="'VIDEO_DETAILS_EXTRACTION'" class="bi bi-play-circle-fill text-indigo-400 text-xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-white mb-1" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(activity.activityType.name(), '_', ' ')))}"></div>
+                                    <div class="text-sm text-gray-400 truncate" th:text="${activity.details}"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 flex-shrink-0" th:text="${#temporals.format(activity.createdAt, 'dd MMM, HH:mm')}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.3s;">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center"><i class="bi bi-graph-up text-green-400 mr-3"></i>Usage Trends (Last 7 Days)</h2>
+                    <div class="h-64">
+                        <canvas id="usageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="glass-card rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.2s;"><h2 class="text-xl font-bold mb-6 flex items-center"><i class="bi bi-lightning-fill text-yellow-400 mr-2"></i>Quick Actions</h2><div class="space-y-3"><a th:href="@{/home}" class="block p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 border border-blue-500/20"><div class="flex items-center space-x-3"><i class="bi bi-tags-fill text-blue-400 text-xl"></i><span class="font-medium text-white">Generate Tags</span></div></a><a th:href="@{/ai-assistant}" class="block p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-purple-600/10 hover:from-purple-500/20 border border-purple-500/20"><div class="flex items-center space-x-3"><i class="bi bi-stars text-purple-400 text-xl"></i><span class="font-medium text-white">AI Assistant</span></div></a><a th:href="@{/thumbnails}" class="block p-4 rounded-xl bg-gradient-to-r from-pink-500/10 to-pink-600/10 hover:from-pink-500/20 border border-pink-500/20"><div class="flex items-center space-x-3"><i class="bi bi-image-fill text-pink-400 text-xl"></i><span class="font-medium text-white">Analyze Thumbnail</span></div></a><a th:href="@{/video-details}" class="block p-4 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-600/10 hover:from-indigo-500/20 border border-indigo-500/20"><div class="flex items-center space-x-3"><i class="bi bi-play-circle-fill text-indigo-400 text-xl"></i><span class="font-medium text-white">Extract Video</span></div></a></div></div>
+                <div class="glass-card rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.4s;"><h3 class="text-lg font-bold text-white mb-4">Account</h3><div class="space-y-3"><div class="flex items-center justify-between text-sm"><span class="text-gray-400">Plan</span><span class="text-white font-semibold">Free Forever</span></div><div class="flex items-center justify-between text-sm"><span class="text-gray-400">Member Since</span><span class="text-white">Jan 2025</span></div><div class="flex items-center justify-between text-sm"><span class="text-gray-400">Usage Limit</span><span class="text-green-400 font-semibold flex items-center"><i class="bi bi-infinity mr-1"></i> Unlimited</span></div></div></div>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${stats != null}" class="text-center py-20 glass-card rounded-2xl">
+        <p class="text-gray-400 text-lg">Please <a th:href="@{/login}" class="text-blue-400 font-bold hover:underline">login</a> to view your dashboard.</p>
+    </div>
+</div>
+
+<script th:replace="~{fragments/navbar :: navbar-script}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('usageChart');
+        if (!ctx) return;
+
+        fetch('/api/dashboard/usage-trends')
+            .then(response => {
+                if (!response.ok) { throw new Error('Network response was not ok'); }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.labels && data.counts) {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Activities',
+                                data: data.counts,
+                                backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                                borderColor: 'rgba(79, 70, 229, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                                x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                            },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                } else { console.error("Failed to load chart data:", data); }
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    });
+</script>
+</body>
+</html>
