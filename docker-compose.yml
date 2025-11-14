@@ -1,0 +1,18 @@
+# 'version' line hata di gayi hai (kyunki naye Docker mein zaroori nahi)
+services:
+  db:
+    image: mysql:8.0
+    container_name: vidgenius-mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'vidgenius_db'
+      MYSQL_USER: 'vidgenius_user'
+      MYSQL_PASSWORD: 'vidgenius_password'
+      MYSQL_ROOT_PASSWORD: 'root_password_123'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
